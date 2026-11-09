@@ -1,11 +1,3 @@
-dik-prizma-hacim-simulasyonu/
-├── .streamlit/
-│   └── config.toml
-├── app.py
-├── requirements.txt
-└── README.md
-streamlit>=1.30.0
-streamlit-embedcode
 import streamlit as st
 import streamlit.components.v1 as components
 
@@ -18,7 +10,6 @@ st.set_page_config(
 st.title("🧊 MAT.7.4.4.ç - Dik Prizmaların Hacmi ve Katman Simülasyonu")
 st.caption("Taban Alanı (TA) × Yükseklik (h) Bağıntısının Birim Küpler ve Katmanlar Aracılığıyla Keşfi")
 
-# Yan Panel - Kontroller
 with st.sidebar:
     st.header("1. Kutu ve Boyut Seçimi")
     box_preset = st.radio(
@@ -51,13 +42,10 @@ with st.sidebar:
         }[x]
     )
 
-    # Katman Sınırı Belirleme
     max_kat = dim_z if direction == 1 else (dim_y if direction == 2 else dim_x)
     kat = st.slider("Dolu Katman Sayısı:", 0, max_kat, min(1, max_kat))
-    
     show_skeleton = st.checkbox("L-İskelet Göster", value=True)
 
-# Matematiksel Hesaplamalar
 if direction == 1:
     ta = dim_x * dim_y
     h = dim_z
@@ -74,7 +62,6 @@ else:
 total_volume = dim_x * dim_y * dim_z
 current_cubes = ta * kat
 
-# 3D Sahne için HTML/Three.js Şablonu
 html_code = f"""
 <!DOCTYPE html>
 <html>
@@ -100,14 +87,12 @@ html_code = f"""
 
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
         
-        // Işıklandırma
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
         scene.add(ambientLight);
         const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
         dirLight.position.set(10, 20, 15);
         scene.add(dirLight);
 
-        // Ana Dış Kutu (Şeffaf Prizma)
         const a = {dim_x}, b = {dim_y}, h = {dim_z};
         const boxGeo = new THREE.BoxGeometry(a, h, b);
         const boxMat = new THREE.MeshPhongMaterial({{
@@ -120,14 +105,12 @@ html_code = f"""
         outerBox.position.set(a/2, h/2, b/2);
         scene.add(outerBox);
 
-        // Kutu Çerçevesi
         const edges = new THREE.EdgesGeometry(boxGeo);
         const lineMat = new THREE.LineBasicMaterial({{ color: 0x0d47a1, linewidth: 2 }});
         const wireframe = new THREE.LineSegments(edges, lineMat);
         wireframe.position.set(a/2, h/2, b/2);
         scene.add(wireframe);
 
-        // Katman Küplerini Çizme
         const direction = {direction};
         const kat = {kat};
         const showSkeleton = {str(show_skeleton).lower()};
@@ -139,7 +122,6 @@ html_code = f"""
             for(let y = 0; y < b; y++) {{
                 for(let z = 0; z < h; z++) {{
                     let shouldDraw = false;
-                    
                     if (direction === 1 && z < kat) shouldDraw = true;
                     if (direction === 2 && y < kat) shouldDraw = true;
                     if (direction === 3 && x < kat) shouldDraw = true;
@@ -153,7 +135,6 @@ html_code = f"""
             }}
         }}
 
-        // L-İskelet Gösterimi
         if (showSkeleton) {{
             const skelMat = new THREE.MeshPhongMaterial({{ color: 0xd32f2f, transparent: true, opacity: 0.4 }});
             for(let i=0; i<a; i++) {{
@@ -173,7 +154,6 @@ html_code = f"""
             }}
         }}
 
-        // Kamera Konumu
         camera.position.set(a * 2.5, h * 2.5, b * 3);
         controls.target.set(a/2, h/2, b/2);
         controls.update();
@@ -188,7 +168,6 @@ html_code = f"""
 </html>
 """
 
-# Sol ve Sağ Kolon Düzeni
 col_vis, col_info = st.columns([2, 1])
 
 with col_vis:
@@ -196,13 +175,11 @@ with col_vis:
 
 with col_info:
     st.subheader("📐 Hacim Bağıntısı (V = TA × h)")
-    
     st.info(f"""
     **Seçilen Taban:** {yon_adi}  
     **1. Katmandaki Küp Sayısı (Taban Alanı - TA):** `{ta}` br²  
     **Kat Sayısı (Yükseklik - h):** `{h}` br  
     """)
-
     st.metric("Toplam Prizma Hacmi (V)", f"{total_volume} br³")
     st.metric("Şu Anki Dolu Hacim", f"{current_cubes} br³", delta=f"%{round((current_cubes/total_volume)*100)} Doluluk")
 

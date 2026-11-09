@@ -10,31 +10,32 @@ st.set_page_config(
 
 st.title("📐 3D Prizma ve Hacim Hesaplama Laboratuvarı (MAT.7.4.4.ç)")
 st.write(
-    "Bu uygulama; şeffaf kutuları, sınırlı renkli birim küpleri (L-iskelet),"
-    " farklı yüzleri taban seçme stratejilerini ve dinamik renklendirmeyi tamamen"
-    " kendi kontrolünüzde deneyimlemeniz için tasarlandı."
+    "Bu uygulama; şeffaf pembe kutuyu, tam boyalı renkli birim küpleri"
+    " (L-iskelet), farklı yüzleri taban seçme stratejilerini ve dinamik"
+    " renklendirmeyi tamamen kendi kontrolünüzde deneyimlemeniz için"
+    " tasarlandı."
 )
 
 # --- YAN PANEL (KONTROL MERKEZİ) ---
 st.sidebar.header("🎛️ Laboratuvar Kontrolleri")
 
-# 1. Kutu / Prizma Seçimi
+# 1. Kutu / Prizma Seçimi (Önce Dikdörtgenler Prizması)
 kutu_tipi = st.sidebar.selectbox(
     "1. Şeffaf Kutu / Model Seçimi",
     [
-        "1. Kutu: 2 x 2 x 4 (Kare Prizma)",
-        "2. Kutu: 2 x 4 x 4 (Dik Konum)",
-        "2. Kutu: 4 x 4 x 2 (Yan Yatırılmış)",
-        "3. Kutu: 4 x 4 x 4 (Küp Kiler)",
+        "1. Kutu: 2 x 4 x 4 (Dikdörtgenler Prizması)",
+        "2. Kutu: 2 x 2 x 4 (Kare Prizma)",
+        "3. Kutu: 4 x 4 x 2 (Yan Yatırılmış Prizma)",
+        "4. Kutu: 4 x 4 x 4 (Küp Kiler)",
         "Özel Boyut (Manuel Sürgüler)",
     ],
 )
 
-if "Kare Prizma" in kutu_tipi:
-  a, b, h = 2, 2, 4
-elif "Dik Konum" in kutu_tipi:
+if "2 x 4 x 4" in kutu_tipi:
   a, b, h = 2, 4, 4
-elif "Yan Yatırılmış" in kutu_tipi:
+elif "2 x 2 x 4" in kutu_tipi:
+  a, b, h = 2, 2, 4
+elif "4 x 4 x 2" in kutu_tipi:
   a, b, h = 4, 4, 2
 elif "Küp Kiler" in kutu_tipi:
   a, b, h = 4, 4, 4
@@ -73,7 +74,7 @@ goster_iskelet = st.sidebar.checkbox(
 
 # 5. Renk Seçimi
 secilen_renk = st.sidebar.color_picker(
-    "4. İç Katman Küpleri Rengi", "#43a047"
+    "4. İç Katman Küpleri Rengi", "#ffb300"
 )
 
 # --- 3D GRAFİK OLUŞTURMA (PLOTLY) ---
@@ -95,46 +96,49 @@ fig.add_trace(
     )
 )
 
-# B. GeoGebra Tarzı Renkli L-İskelet (Kenar Boyunca Küpler)
+# B. GeoGebra Tarzı Tamamen Renkli L-İskelet (Kenar Boyunca Küpler)
 if goster_iskelet:
-  # Boy ayrıtı boyunca küpler (Mor tonu)
+  # Boy ayrıtı boyunca küpler (Mor tonu - Opak ve tam renkli yüzler)
   for i in range(1, a + 1):
     fig.add_trace(
         go.Mesh3d(
             x=[i - 1, i, i, i - 1, i - 1, i, i, i - 1],
             y=[0, 0, 1, 1, 0, 0, 1, 1],
             z=[0, 0, 0, 0, 1, 1, 1, 1],
-            color="#673ab7",
-            opacity=0.85,
+            color="#5e35b1",
+            opacity=0.95,
             name="L-İskelet (Boy)",
+            flatshading=False,
         )
     )
-  # En ayrıtı boyunca küpler (Sarı tonu)
+  # En ayrıtı boyunca küpler (Sarı / Altın tonu)
   for j in range(2, b + 1):
     fig.add_trace(
         go.Mesh3d(
             x=[0, 1, 1, 0, 0, 1, 1, 0],
             y=[j - 1, j - 1, j, j, j - 1, j - 1, j, j],
             z=[0, 0, 0, 0, 1, 1, 1, 1],
-            color="#ffeb3b",
-            opacity=0.85,
+            color="#fbc02d",
+            opacity=0.95,
             name="L-İskelet (En)",
+            flatshading=False,
         )
     )
-  # Yükseklik ayrıtı boyunca küpler (Turuncu/Kırmızı tonu)
+  # Yükseklik ayrıtı boyunca küpler (Kırmızı / Bordo tonu)
   for k in range(2, h + 1):
     fig.add_trace(
         go.Mesh3d(
             x=[0, 1, 1, 0, 0, 1, 1, 0],
             y=[0, 0, 1, 1, 0, 0, 1, 1],
             z=[k - 1, k - 1, k - 1, k - 1, k, k, k, k],
-            color="#ff5722",
-            opacity=0.85,
+            color="#d81b60",
+            opacity=0.95,
             name="L-İskelet (Yükseklik)",
+            flatshading=False,
         )
     )
 
-# C. İç Kısımdaki Küplerin Katmanlanması
+# C. İç Kısımdaki Küplerin Tamamen Renkli Katmanlanması
 if kat > 0:
   for k_idx in range(kat):
     if yon_val == 1:
@@ -173,8 +177,9 @@ if kat > 0:
                       k_idx + 1,
                   ],
                   color=secilen_renk,
-                  opacity=0.8,
+                  opacity=0.9,
                   name=f"Katman {k_idx+1}",
+                  flatshading=False,
               )
           )
     elif yon_val == 2:
@@ -213,8 +218,9 @@ if kat > 0:
                       k_i,
                   ],
                   color=secilen_renk,
-                  opacity=0.8,
+                  opacity=0.9,
                   name=f"Katman {k_idx+1}",
+                  flatshading=False,
               )
           )
     else:
@@ -253,8 +259,9 @@ if kat > 0:
                       k_i,
                   ],
                   color=secilen_renk,
-                  opacity=0.8,
+                  opacity=0.9,
                   name=f"Katman {k_idx+1}",
+                  flatshading=False,
               )
           )
 
@@ -288,7 +295,7 @@ with col2:
   )
 
   st.success(
-      "💡 **Pedagojik Not:** Görseldeki gibi kenarları saran L-iskelet yapısı"
-      " ve renk paletiyle kontrol edilen iç katmanlar sayesinde öğrenciler"
-      " hacim formülünü somut olarak keşfeder."
+      "💡 **Pedagojik Not:** İlk sırada Dikdörtgenler Prizması yer alır."
+      " Görseldeki gibi şeffaf pembe kutu içinde tüm yüzeyleri boyanmış birim"
+      " küpler ve L-iskelet yapısı hacim formülünü somutlaştırır."
   )

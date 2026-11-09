@@ -10,9 +10,9 @@ st.set_page_config(
 
 st.title("📐 3D Prizma ve Hacim Hesaplama Laboratuvarı (MAT.7.4.4.ç)")
 st.write(
-    "Bu uygulama; şeffaf kutuları, sınırlı birim küpleri (L-iskelet), farklı"
-    " yüzleri taban seçme stratejilerini ve dinamik renklendirmeyi tamamen kendi"
-    " kontrolünüzde deneyimlemeniz için tasarlandı."
+    "Bu uygulama; şeffaf kutuları, sınırlı renkli birim küpleri (L-iskelet),"
+    " farklı yüzleri taban seçme stratejilerini ve dinamik renklendirmeyi tamamen"
+    " kendi kontrolünüzde deneyimlemeniz için tasarlandı."
 )
 
 # --- YAN PANEL (KONTROL MERKEZİ) ---
@@ -68,18 +68,18 @@ kat = st.sidebar.slider(
 
 # 4. Görünüm Seçenekleri
 goster_iskelet = st.sidebar.checkbox(
-    "Sınırlı Küp (L-İskelet) Göster", value=True
+    "GeoGebra Tarzı Renkli L-İskelet Göster", value=True
 )
 
 # 5. Renk Seçimi
 secilen_renk = st.sidebar.color_picker(
-    "4. Katman / Küp Rengi Seçimi", "#43a047"
+    "4. İç Katman Küpleri Rengi", "#43a047"
 )
 
 # --- 3D GRAFİK OLUŞTURMA (PLOTLY) ---
 fig = go.Figure()
 
-# A. Şeffaf Ana Kutu
+# A. GeoGebra Tarzı Pembe Şeffaf Ana Kutu
 fig.add_trace(
     go.Mesh3d(
         x=[0, a, a, 0, 0, a, a, 0],
@@ -88,50 +88,53 @@ fig.add_trace(
         i=[7, 0, 0, 0, 4, 4, 2, 1, 6, 5, 2, 3],
         j=[3, 4, 1, 2, 5, 6, 3, 5, 5, 1, 6, 7],
         k=[0, 1, 2, 3, 6, 7, 1, 2, 4, 0, 5, 6],
-        color="lightblue",
-        opacity=0.15,
+        color="deeppink",
+        opacity=0.12,
         name="Şeffaf Prizma Kutu",
         flatshading=True,
     )
 )
 
-# B. Sınırlı Küp (L-İskelet) Çizimi
+# B. GeoGebra Tarzı Renkli L-İskelet (Kenar Boyunca Küpler)
 if goster_iskelet:
+  # Boy ayrıtı boyunca küpler (Mor tonu)
   for i in range(1, a + 1):
     fig.add_trace(
         go.Mesh3d(
             x=[i - 1, i, i, i - 1, i - 1, i, i, i - 1],
             y=[0, 0, 1, 1, 0, 0, 1, 1],
             z=[0, 0, 0, 0, 1, 1, 1, 1],
-            color="royalblue",
-            opacity=0.8,
-            name="L-İskelet",
+            color="#673ab7",
+            opacity=0.85,
+            name="L-İskelet (Boy)",
         )
     )
+  # En ayrıtı boyunca küpler (Sarı tonu)
   for j in range(2, b + 1):
     fig.add_trace(
         go.Mesh3d(
             x=[0, 1, 1, 0, 0, 1, 1, 0],
             y=[j - 1, j - 1, j, j, j - 1, j - 1, j, j],
             z=[0, 0, 0, 0, 1, 1, 1, 1],
-            color="gold",
-            opacity=0.8,
-            name="L-İskelet",
+            color="#ffeb3b",
+            opacity=0.85,
+            name="L-İskelet (En)",
         )
     )
+  # Yükseklik ayrıtı boyunca küpler (Turuncu/Kırmızı tonu)
   for k in range(2, h + 1):
     fig.add_trace(
         go.Mesh3d(
             x=[0, 1, 1, 0, 0, 1, 1, 0],
             y=[0, 0, 1, 1, 0, 0, 1, 1],
             z=[k - 1, k - 1, k - 1, k - 1, k, k, k, k],
-            color="crimson",
-            opacity=0.8,
-            name="L-İskelet",
+            color="#ff5722",
+            opacity=0.85,
+            name="L-İskelet (Yükseklik)",
         )
     )
 
-# C. Seçilen Yöne ve Katmana Göre Birim Küplerin Katmanlanması
+# C. İç Kısımdaki Küplerin Katmanlanması
 if kat > 0:
   for k_idx in range(kat):
     if yon_val == 1:
@@ -170,7 +173,7 @@ if kat > 0:
                       k_idx + 1,
                   ],
                   color=secilen_renk,
-                  opacity=0.75,
+                  opacity=0.8,
                   name=f"Katman {k_idx+1}",
               )
           )
@@ -210,7 +213,7 @@ if kat > 0:
                       k_i,
                   ],
                   color=secilen_renk,
-                  opacity=0.75,
+                  opacity=0.8,
                   name=f"Katman {k_idx+1}",
               )
           )
@@ -250,7 +253,7 @@ if kat > 0:
                       k_i,
                   ],
                   color=secilen_renk,
-                  opacity=0.75,
+                  opacity=0.8,
                   name=f"Katman {k_idx+1}",
               )
           )
@@ -272,10 +275,11 @@ fig.update_layout(
 col1, col2 = st.columns([2, 1])
 
 with col1:
-  st.plotly_chart(fig, use_container_width=True)
+  st.subheader("🧊 GeoGebra Tarzı 3D Prizma Laboratuvarı")
+  st.plotly_chart(fig, use_container_width=True, key="prizma_3d_grafik")
 
 with col2:
-  st.subheader("📊 Hacim Analizi ($V = TA \times h$)")
+  st.subheader("📊 Hacim Analizi (V = TA × h)")
   st.info(
       f"**Seçilen Kutu Boyutları:** {a} × {b} × {h}\n\n"
       f"**Seçilen Taban Alanı (TA):** {ta} br²\n\n"
@@ -284,8 +288,7 @@ with col2:
   )
 
   st.success(
-      "💡 **Pedagojik Not:** Kullanıcı sol panelden kutuyu değiştirebilir,"
-      " katmanları artırabilir, farklı yüzleri taban seçebilir ve renk"
-      " paletiyle küpleri dilediği renge boyayarak hacmin korunumunu"
-      " gözlemleyebilir."
+      "💡 **Pedagojik Not:** Görseldeki gibi kenarları saran L-iskelet yapısı"
+      " ve renk paletiyle kontrol edilen iç katmanlar sayesinde öğrenciler"
+      " hacim formülünü somut olarak keşfeder."
   )

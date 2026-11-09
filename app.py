@@ -97,7 +97,6 @@ fig.add_trace(
 
 # B. Sınırlı Küp (L-İskelet) Çizimi
 if goster_iskelet:
-  # X ekseni boyunca
   for i in range(1, a + 1):
     fig.add_trace(
         go.Mesh3d(
@@ -109,7 +108,6 @@ if goster_iskelet:
             name="L-İskelet",
         )
     )
-  # Y ekseni boyunca
   for j in range(2, b + 1):
     fig.add_trace(
         go.Mesh3d(
@@ -121,7 +119,6 @@ if goster_iskelet:
             name="L-İskelet",
         )
     )
-  # Z ekseni (Yükseklik) boyunca
   for k in range(2, h + 1):
     fig.add_trace(
         go.Mesh3d(
@@ -137,7 +134,7 @@ if goster_iskelet:
 # C. Seçilen Yöne ve Katmana Göre Birim Küplerin Katmanlanması
 if kat > 0:
   for k_idx in range(kat):
-    if yon_val == 1:  # Alt taban
+    if yon_val == 1:
       for i in range(1, a + 1):
         for j in range(1, b + 1):
           fig.add_trace(
@@ -177,7 +174,7 @@ if kat > 0:
                   name=f"Katman {k_idx+1}",
               )
           )
-    elif yon_val == 2:  # Ön yüz
+    elif yon_val == 2:
       for i in range(1, a + 1):
         for k_i in range(1, h + 1):
           fig.add_trace(
@@ -217,7 +214,7 @@ if kat > 0:
                   name=f"Katman {k_idx+1}",
               )
           )
-    else:  # Yan yüz
+    else:
       for j in range(1, b + 1):
         for k_i in range(1, h + 1):
           fig.add_trace(
@@ -272,4 +269,23 @@ fig.update_layout(
 )
 
 # --- ANA EKRAN BİLGİ VE ANALİZ PANELİ ---
-col1, col2 = st.columns([2, 1
+col1, col2 = st.columns([2, 1])
+
+with col1:
+  st.plotly_chart(fig, use_container_width=True)
+
+with col2:
+  st.subheader("📊 Hacim Analizi ($V = TA \times h$)")
+  st.info(
+      f"**Seçilen Kutu Boyutları:** {a} × {b} × {h}\n\n"
+      f"**Seçilen Taban Alanı (TA):** {ta} br²\n\n"
+      f"**İlgili Yükseklik (h):** {yuksek} br\n\n"
+      f"**Toplam Hacim (V):** {ta} × {yuksek} = **{a * b * h} br³**"
+  )
+
+  st.success(
+      "💡 **Pedagojik Not:** Kullanıcı sol panelden kutuyu değiştirebilir,"
+      " katmanları artırabilir, farklı yüzleri taban seçebilir ve renk"
+      " paletiyle küpleri dilediği renge boyayarak hacmin korunumunu"
+      " gözlemleyebilir."
+  )

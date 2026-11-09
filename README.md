@@ -1,2 +1,2 @@
-# Dikd-rtgenler-Prizmas-Hacim
+# Dikdörtgenler-Prizmas-Hacim
 Hacim

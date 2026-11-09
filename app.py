@@ -272,10 +272,11 @@ fig.update_layout(
 col1, col2 = st.columns([2, 1])
 
 with col1:
-  st.plotly_chart(fig, use_container_width=True)
+  st.subheader("🧊 3D Prizma Görselleştirme Laboratuvarı")
+  st.plotly_chart(fig, use_container_width=True, key="prizma_3d_grafik")
 
 with col2:
-  st.subheader("📊 Hacim Analizi ($V = TA \times h$)")
+  st.subheader("📊 Hacim Analizi (V = TA × h)")
   st.info(
       f"**Seçilen Kutu Boyutları:** {a} × {b} × {h}\n\n"
       f"**Seçilen Taban Alanı (TA):** {ta} br²\n\n"
@@ -284,8 +285,7 @@ with col2:
   )
 
   st.success(
-      "💡 **Pedagojik Not:** Kullanıcı sol panelden kutuyu değiştirebilir,"
-      " katmanları artırabilir, farklı yüzleri taban seçebilir ve renk"
-      " paletiyle küpleri dilediği renge boyayarak hacmin korunumunu"
-      " gözlemleyebilir."
+      "💡 **Pedagojik Not:** Sol panelden kutu seçebilir, katmanları"
+      " artırabilir, farklı yüzleri taban seçebilir ve renk paletiyle küpleri"
+      " dilediğiniz renge boyayarak hacmin korunumunu gözlemleyebilirsiniz."
   )
